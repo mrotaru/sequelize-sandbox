@@ -1,14 +1,12 @@
 # mysql
 # -----
-
 class { '::mysql::server':
-  root_password => 'pass'
-  $databases = {
-    'sequelize' => {
-      ensure  => 'present',
-      charset => 'utf8',
-    },
-  }
+  root_password => 'asdasd',
+}
+
+mysql_database { 'sequelize':
+  ensure  => 'present',
+  charset => 'utf8',
 }
 
 # node
