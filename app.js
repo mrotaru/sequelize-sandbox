@@ -8,7 +8,6 @@ var routes = require('./routes');
 var user = require('./routes/user');
 var http = require('http');
 var path = require('path');
-var db = require('./models')
 var _ = require('lodash')
 
 var app = express();
@@ -33,18 +32,18 @@ if ('development' == app.get('env')) {
 app.get('/', routes.index);
 app.get('/users', user.list);
 
-db
-    .sequelize
-    .sync({ force: true })
-    .complete(function(err) {
-        if (err) {
-            throw err
-        } else {
-            http.createServer(app).listen(app.get('port'), function(){
-                console.log('Express server listening on port ' + app.get('port'))
-            })
-        }
-    });
+//db
+//    .sequelize
+//    .sync({ force: true })
+//    .complete(function(err) {
+//        if (err) {
+//            throw err
+//        } else {
+//            http.createServer(app).listen(app.get('port'), function(){
+//                console.log('Express server listening on port ' + app.get('port'))
+//            })
+//        }
+//    });
 
 //var joe = db['User'].build({name: 'Joe'});
 //var jeb = db['User'].build({name: 'Jeb'});
@@ -94,10 +93,14 @@ Video = sequelize.define('Video', {
     }
 });
 
-Series.hasOne(Video);
-Trainer.hasMany(Series);
+//Trainer.hasMany(Series);
+//Series.hasOne(Video);
 
-var s1 = Series.build({title: 'S1'});
-var t1 = Trainer.build({first_name: 'Jon T'});
-console.log(s1);
-s1.setTrainer(t1);
+//_.each([,jeb,abe], function(i){ i.save(); });
+sequelize.sync({force:true});
+//var s1 = Series.build({title: 'S1'});
+//var t1 = Trainer.build({first_name: 'Jon T'});
+//s1.save();
+//t1.save();
+//sequelize.sync();
+//s1.setTrainer(t1);
