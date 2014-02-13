@@ -24,9 +24,12 @@ app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
+// dev
+app.set('env','development');
+
 // development only
 if ('development' == app.get('env')) {
-  app.use(express.errorHandler());
+    app.use(express.errorHandler());
 }
 
 app.get('/', routes.index);
@@ -56,7 +59,7 @@ app.get('/users', user.list);
 
 var fs        = require('fs')
   , Sequelize = require('sequelize')
-  , sequelize = new Sequelize('sequelize', 'root', 'asdasd')
+  , sequelize = new Sequelize('sequelize', 'root', 'asdasd', {logging:console.log})
 
 var Series, Trainer, Video
  
@@ -71,8 +74,10 @@ Series = sequelize.define('Series', {
         type: Sequelize.INTEGER,
         references: "Trainer",
         referencesKey: "id"
-    }
-})
+        }
+    },{
+   tableName: 'Series'
+});
 
 Trainer = sequelize.define('Trainer', {
     first_name: Sequelize.STRING,
@@ -95,6 +100,8 @@ Video = sequelize.define('Video', {
 
 //Trainer.hasMany(Series);
 //Series.hasOne(Video);
+Trainer.hasMany(Series);
+Series.hasOne(Video);
 
 //_.each([,jeb,abe], function(i){ i.save(); });
 sequelize.sync({force:true});
