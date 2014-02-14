@@ -37,18 +37,30 @@ app.get('/users', user.list);
 
 var fs        = require('fs')
   , Sequelize = require('sequelize')
-  , sequelize = new Sequelize('sequelize', 'root', 'asdasd', {logging:console.log})
+  , sequelize = new Sequelize('sequelize', 'root', 'asdasd', {logging:console.log});
 
 var User = sequelize.define('User', {
     username: Sequelize.STRING,
     birthday: Sequelize.DATE
-})
+});
+
+var Group = sequelize.define('Group', {
+    name: Sequelize.STRING,
+});
+
+//Group.hasMany(User);
+User.hasMany(User, {as: 'Friend'});
+
+var joe = User.build({username: 'Joe',birthday:'2014-01-01'});
+var jeb = User.build({username: 'Jeb',birthday:'2013-01-01'});
+var abe = User.build({username: 'Abe',birthday:'2012-01-01'});
+var admins = Group.build({name: 'Admins'});
 
 sequelize.sync().success(function() {
-    User.create({
-        username: 'sdepold',
-        birthday: new Date(1986, 06, 28)
-    }).success(function(sdepold) {
-        console.log(sdepold.values)
-    })
-})
+    console.log('tables created');
+    _.each([joe,jeb,abe], function(i){i.save()});
+});
+
+//sequelize.sync().success(function() {
+//    console.log('done');
+//})
