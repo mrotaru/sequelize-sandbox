@@ -56,10 +56,17 @@ var jeb = User.build({username: 'Jeb',birthday:'2013-01-01'});
 var abe = User.build({username: 'Abe',birthday:'2012-01-01'});
 var admins = Group.build({name: 'Admins'});
 
-sequelize.sync().success(function() {
-    console.log('tables created');
-    _.each([joe,jeb,abe], function(i){i.save()});
+var chainer = new Sequelize.Utils.QueryChainer;
+chainer.add(sequelize.sync());
+_.each([joe,jeb,abe], function(i){
+    chainer.add(i.save())
 });
+chainer.add(admins.save());
+chainer.add(joe.setFriend([jeb,abe]));
+chainer
+    .runSerially()
+    .success(function(){console.log('done')})
+    .error(function(errors){console.log(errors)});
 
 //sequelize.sync().success(function() {
 //    console.log('done');
