@@ -44,30 +44,19 @@ var User = sequelize.define('User', {
     birthday: Sequelize.DATE
 });
 
-var Group = sequelize.define('Group', {
-    name: Sequelize.STRING,
-});
-
-//Group.hasMany(User);
-User.hasMany(User, {as: 'Friend'});
+User.hasMany(User, {as: 'Friends',through: 'Friends'});
 
 var joe = User.build({username: 'Joe',birthday:'2014-01-01'});
 var jeb = User.build({username: 'Jeb',birthday:'2013-01-01'});
 var abe = User.build({username: 'Abe',birthday:'2012-01-01'});
-var admins = Group.build({name: 'Admins'});
 
-var chainer = new Sequelize.Utils.QueryChainer;
-chainer.add(sequelize.sync());
-_.each([joe,jeb,abe], function(i){
-    chainer.add(i.save())
+User.sync().success(function(){
+    var chainer = new Sequelize.Utils.QueryChainer()
+    _.each([joe,jeb,abe], function(i){
+                chainer.add(i.save())
+    });
+
+    chainer.run().success(function(){
+        joe.setFriends([jeb,abe]);
+    }).error(function(errors){console.log(errors)});
 });
-chainer.add(admins.save());
-chainer.add(joe.setFriend([jeb,abe]));
-chainer
-    .runSerially()
-    .success(function(){console.log('done')})
-    .error(function(errors){console.log(errors)});
-
-//sequelize.sync().success(function() {
-//    console.log('done');
-//})
